@@ -13,7 +13,7 @@ const mongodb_url = process.env.MONGODB_URL;
 
 
 // Middleware
-app.use(cors());  // Ensure CORS is before any routes
+app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -28,14 +28,11 @@ const authenticate = (req, res, next) => {
   if (!token) {
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
-  // Logic to verify token (e.g., decode and validate)
-  // If token is valid, call next() to proceed to the next middleware/route
   next();
 };
 
 // Apply authentication middleware to routes that require authentication
 app.use('/protected-route', authenticate, (req, res) => {
-  // This route is protected and will only be accessible with a valid token
   res.json({ message: 'Access granted to protected route' });
 });
 
@@ -71,38 +68,52 @@ mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err);
 });
 
+const getNextId = async () => {
+  const lastProduct = await ProductModel.findOne().sort({ productId: -1 });
+  return lastProduct ? lastProduct.productId + 1 : 1;
+};
+
 
 // Route handler for /upload
-app.post("/upload",authenticate,upload.single('file'),(req, res, next) => {
+app.post("/upload", authenticate, upload.single('file'), async (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  const fileBuffer = req.file.buffer;
+  try {
+    const nextId = await getNextId();
+    const fileBuffer = req.file.buffer;
 
-  cloudinary.uploader.upload_stream({ resource_type: 'image' }, (err, result) => {
-    if (err) {
-      console.error('Cloudinary upload error:', err);
-      return res.status(500).json({ error: 'Error uploading file' });
-    }
+    cloudinary.uploader.upload_stream({ resource_type: 'image' }, async (err, result) => {
+      if (err) {
+        console.error('Cloudinary upload error:', err);
+        return res.status(500).json({ error: 'Error uploading file' });
+      }
 
-    const product = new ProductModel({
-      name: req.body.name,
-      price: req.body.price,
-      url: result.secure_url, // Cloudinary URL
-      genre: req.body.genre,
-      type: req.body.type
-    });
+      const product = new ProductModel({
+        productId: nextId,
+        name: req.body.name,
+        price: req.body.price,
+        url: result.secure_url, // Cloudinary URL
+        genre: req.body.genre,
+        type: req.body.type,
+      });
 
-    product.save().then(() => {
-      res.json({ success: true, product });
-      console.log("Product saved successfully");
-    }).catch(err => {
-      console.error('MongoDB save error:', err);
-      res.status(500).json({ error: 'Error saving product' });
-    });
-  }).end(fileBuffer);
+      try {
+        await product.save();
+        res.json({ success: true, product });
+        console.log("Product saved successfully");
+      } catch (err) {
+        console.error('MongoDB save error:', err);
+        res.status(500).json({ error: 'Error saving product' });
+      }
+    }).end(fileBuffer);
+  } catch (err) {
+    console.error('Error getting next ID:', err);
+    res.status(500).json({ error: 'Error getting next ID' });
+  }
 });
+
 
 
 app.get("/products", authenticate,(req, res) => {
@@ -115,6 +126,81 @@ app.get("/products", authenticate,(req, res) => {
       res.status(500).json({ error: 'Error fetching products' });
     });
 });
+
+
+
+// Route handler for updating a product by its productId
+app.put("/products/:productId", authenticate, upload.single('file'), async (req, res) => {
+  const productId = req.params.productId;
+
+  try {
+    // Find the product by its productId
+    const product = await ProductModel.findOne({ productId });
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    // Update the product fields
+    product.name = req.body.name || product.name;
+    product.price = req.body.price || product.price;
+    product.genre = req.body.genre || product.genre;
+    product.type = req.body.type || product.type;
+
+    // If a new image is uploaded, update the image URL
+    if (req.file) {
+      const fileBuffer = req.file.buffer;
+      // Upload the new image to Cloudinary
+      cloudinary.uploader.upload_stream({ resource_type: 'image' }, async (err, result) => {
+        if (err) {
+          console.error('Cloudinary upload error:', err);
+          return res.status(500).json({ error: 'Error uploading file' });
+        }
+        // Update the product's URL with the new secure URL
+        product.url = result.secure_url;
+        // Save the updated product
+        await product.save();
+        res.json({ success: true, product });
+        console.log("Product updated successfully with new image");
+      }).end(fileBuffer);
+    } else {
+      // If no new image is uploaded, save the product with existing URL
+      await product.save();
+      res.json({ success: true, product });
+      console.log("Product updated successfully");
+    }
+  } catch (err) {
+    console.error('Error updating product:', err);
+    res.status(500).json({ error: 'Error updating product' });
+  }
+});
+
+
+
+
+// Route handler for deleting a product by productId
+app.delete("/products/:productId", authenticate, async (req, res) => {
+  const productId = req.params.productId;
+
+  try {
+    const deletedProduct = await ProductModel.findOneAndDelete({ productId: productId });
+
+    if (!deletedProduct) {
+      return res.status(404).json({ error: `Product with productId ${productId} not found` });
+    }
+
+    res.json({ success: true, deletedProduct });
+    console.log(`Product with productId ${productId} deleted successfully`);
+  } catch (err) {
+    console.error('Error deleting product:', err);
+    res.status(500).json({ error: 'Error deleting product' });
+  }
+});
+
+
+
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

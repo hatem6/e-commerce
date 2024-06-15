@@ -97,6 +97,7 @@ app.post("/upload", authenticate, upload.single('file'), async (req, res, next) 
         url: result.secure_url, // Cloudinary URL
         genre: req.body.genre,
         type: req.body.type,
+        description:req.body.description,
       });
 
       try {
@@ -146,6 +147,7 @@ app.put("/products/:productId", authenticate, upload.single('file'), async (req,
     product.price = req.body.price || product.price;
     product.genre = req.body.genre || product.genre;
     product.type = req.body.type || product.type;
+    product.description = req.body.description || product.description;
 
     // If a new image is uploaded, update the image URL
     if (req.file) {

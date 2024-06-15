@@ -25,8 +25,8 @@ const Sidebar = () => {
       {activeMenu && (
         <>
           <div className="flex justify-between items-center">
-            <Link to="/" onClick={handleCloseSideBar} className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900">
-            <GiDinosaurRex /> <span>Offline</span>
+            <Link to="/ecommerce" onClick={handleCloseSideBar} className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900">
+            <img src="https://i.postimg.cc/26h8mJYV/YOLO-1.png" height={20} width={30} alt="img" /> <span>YOLO</span>
             </Link>
             <TooltipComponent content="Menu" position="BottomCenter">
               <button

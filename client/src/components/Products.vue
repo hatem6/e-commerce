@@ -71,7 +71,11 @@ export default {
       } else if (this.genre === "woman") {
         if (this.type == "dresse") {
           return products.filter((product) => product.type === "dresse");
-        } else {
+        }
+        else if(this.type == "w-t-shirt"){
+          return products.filter((product) => product.type === "w-t-shirt");
+        }
+        else {
           return products.filter((product) => product.type === "w-jeans");
         }
       }

@@ -1,10 +1,14 @@
 <template>
-  <nav class="bg-white w-full border-b md:border-0 md:static">
-    <div class="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
+  <nav class="w-full md:border-0">
+   
+    <div class="items-center px-4 max-w-screen-xl mx-auto md:flex space-x-10">
+     
       <div class="flex items-center justify-between py-3 md:py-5 md:block">
-        <a>
+        <div class="md:hidden"> <img class="" src="https://i.postimg.cc/26h8mJYV/YOLO-1.png" width="40"  alt="img"></div>
+        <a class="flex">
+          <img  class="hidden md:block" src="https://i.postimg.cc/26h8mJYV/YOLO-1.png" width="40"  alt="img">
           <img
-            src="../assets/offline.png"
+            src="../assets/YOLO.png"
             width="120"
             height="50"
             alt="Float UI logo"
@@ -48,24 +52,35 @@
           <!-- Log In and Sign Up links -->
           <li>
             <router-link
-              to="/signin"
-              class="py-2 px-2 text-[#000000] hover:text-red-700"
+              to="#"
+              class="py-2 px-2 text-gray-600 hover:text-red-700"
             >
-              Log In
+              about
             </router-link>
           </li>
           <li>
             <router-link
-              to="/signup"
+              to="/faqs"
+              class="py-2 px-2 text-[#000000] hover:text-red-700"
+            >
+              FAQ
+            </router-link>
+          </li>
+          <li>
+            <a
+              href="/signin"
               class="py-2 px-2 text-white bg-gray-950 hover:bg-gray-800 rounded-md shadow"
             >
-              Sign up
-            </router-link>
+              Sign in
+            </a>
           </li>
         </ul>
       </div>
       <div class="pb-3 md:block md:mt-0" :class="[open ? 'block' : 'hidden']">
-        <router-link to="/shop" class="py-2 px-2 text-[#000000]">
+       
+      
+
+          <router-link to="/shop" class="py-2 px-2 text-[#000000]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -84,6 +99,9 @@
             <span class="text-white text-xs">{{ shop.length }}</span>
           </span>
         </router-link>
+    
+        
+        
       </div>
     </div>
   </nav>
@@ -126,4 +144,5 @@ export default {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 </style>

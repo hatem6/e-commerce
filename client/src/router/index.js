@@ -7,6 +7,7 @@ import Products from "../components/Products.vue";
 import Shop from "../components/Shop.vue";
 import Signin from "../components/Signin.vue";
 import Signup from "../components/Signup.vue";
+import Faq from "../components/Faq.vue";
 
 const routes = [
   {
@@ -29,6 +30,11 @@ const routes = [
     path: "/shop",
     name: "shop",
     component: Shop,
+  },
+  {
+    path: "/faqs",
+    name: "faq",
+    component: Faq,
   },
   {
     path: "/checkout",

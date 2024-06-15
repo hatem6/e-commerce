@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-3 col-md-3" id="categorie">
+  <div class="col-lg-3 col-md-3 " id="categorie">
     <div class="shop__sidebar">
       <div class="sidebar__categories">
         <div class="section-title">
@@ -65,6 +65,13 @@
                     <li>
                       <router-link
                         to="/"
+                        @click="sendDataToProducts('woman', 'w-t-shirt')"
+                        >T-shirts</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link
+                        to="/"
                         @click="sendDataToProducts('woman', 'w-jeans')"
                         >Jeans</router-link
                       >
@@ -96,4 +103,14 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+
+@media screen and (min-width:800px) {
+  #categorie{
+    position: fixed;
+    background-color:white;
+    width: 150px;
+  }
+}
+
+</style>

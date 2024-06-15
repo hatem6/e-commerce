@@ -9,7 +9,7 @@
               <ul>
                 <li>
                   <h6><i class="fa fa-map-marker"></i> Address</h6>
-                  <p>Ariana soukra dar fadhal</p>
+                  <p>Tunisia soukra</p>
                 </li>
                 <li>
                   <h6><i class="fa fa-phone"></i> Phone</h6>
@@ -17,7 +17,7 @@
                 </li>
                 <li>
                   <h6><i class="fa fa-headphones"></i> Support</h6>
-                  <p>offline@gmail.com</p>
+                  <p>YOLO@gmail.com</p>
                 </li>
               </ul>
             </div>
@@ -265,7 +265,12 @@ export default {
   text-transform: uppercase;
   display: inline-block;
   padding: 14px 30px 12px;
-  background: #ca1515;
+  background: #111;
+  color: #fff;
+}
+
+.btn:hover {
+  background: #222222;
   color: #fff;
 }
 </style>

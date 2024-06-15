@@ -1,7 +1,10 @@
 <template>
   <div class="">
-    <Navbar></Navbar>
-    <br /><br /><br />
+    <div class="navbar">
+      <Navbar></Navbar>
+    </div>
+   
+    <br /><br /><br /><br /><br />
     <div class="container">
       <br />
       <Categorie v-if="!RouteHidden"></Categorie>
@@ -45,6 +48,13 @@ export default {
 <style scoped>
 .container {
   display: flex;
+}
+
+.navbar{
+  background-color: rgb(244, 244, 244);
+  position: fixed;
+  z-index:999;
+  width: 100%;
 }
 
 @media screen and (max-width: 768px) {

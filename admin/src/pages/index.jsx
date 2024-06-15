@@ -1,9 +1,12 @@
-export { default as Ecommerce } from './Ecommerce';
+// Example content of your index.jsx file
 
-export { default as Orders } from './Orders';
-export { default as Employees } from './Employees';
+import Home from './Home';
+import Customers from './Customers';
+import Ecommerce from './Ecommerce';
+import Employees from './Employees';
+import Orders from './Orders';
+import Products from './Products';
 
-export { default as Customers } from './Customers';
+export { Home, Customers, Ecommerce, Employees, Orders, Products };
 
-export { default as Products } from './Products';
-
+// Add a newline at the end of the file

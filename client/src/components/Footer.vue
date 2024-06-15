@@ -6,14 +6,11 @@
           <div class="footer__about">
             <div class="footer__logo">
               <a href="./index.html"
-                ><img src="../assets/offline.png" style="width: 250px" alt=""
+                ><img src="../assets/YOLO.png" style="width: 250px" alt=""
               /></a>
             </div>
             <p>
-              Welcome to Offline, where streetwear meets creativity, style, and
-              self-expression. We're more than just a clothing brand; we're a
-              community of individuals who embrace urban culture and fashion as
-              a form of art.
+              WELCOME TO YOLO WORLD . Ofc it’s not about what you wear , it’s about how you feel “ YOLO right here to makes you live it the way you want . remember ! focus on the chicken not the eggs 😛
             </p>
           </div>
         </div>
@@ -78,8 +75,6 @@
           <div class="footer__copyright__text">
             <p>
               Copyright &copy; All rights reserved .<br />
-              Created by <br />
-              AtiK Hatem and Mrad Khouloud
             </p>
           </div>
         </div>
@@ -94,6 +89,29 @@ export default {};
 /*---------------------
   Footer
 -----------------------*/
+
+
+@media screen and (min-width:800px) {
+  
+.row{
+  position: relative;
+  left:20%;
+  width:600px;
+}
+}
+
+
+@media screen and (min-width:1200px) {
+  
+  .row{
+    position: relative;
+    left:20%;
+    width:900px;
+  }
+  }
+  
+
+
 
 .footer {
   padding-top: 55px;

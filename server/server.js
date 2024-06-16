@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const ProductModel = require("./models/Products");
+const EmployeeModel = require("./models/Employees");
 
 dotenv.config();
 const port = process.env.PORT || 3001;
@@ -68,13 +69,16 @@ mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err);
 });
 
+
+//Products routes
+
+
 const getNextId = async () => {
   const lastProduct = await ProductModel.findOne().sort({ productId: -1 });
   return lastProduct ? lastProduct.productId + 1 : 1;
 };
 
-
-// Route handler for /upload
+// Route handler for upload
 app.post("/upload", authenticate, upload.single('file'), async (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -200,6 +204,162 @@ app.delete("/products/:productId", authenticate, async (req, res) => {
 });
 
 
+
+
+// Employees Routes
+const getNextEmployeeId = async () => {
+  const lastEmployee = await EmployeeModel.findOne().sort({ id: -1 });
+  return lastEmployee ? lastEmployee.id + 1 : 1;
+};
+
+app.post('/employees/signup', authenticate, upload.single('file'), async (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  try {
+    const existingEmployee = await EmployeeModel.findOne({ email: req.body.email });
+    if (existingEmployee) {
+      return res.json({ success:false,error: 'Email already exists' });
+    }
+    const nextId = await getNextEmployeeId();
+
+    const fileBuffer = req.file.buffer;
+    // Logging for debugging
+    console.log('File received:', req.file);
+    // Upload the file to Cloudinary
+    cloudinary.uploader.upload_stream({ resource_type: 'image' }, async (err, result) => {
+      if (err) {
+        console.error('Cloudinary upload error:', err);
+        return res.status(500).json({ error: 'Error uploading file' });
+      }
+      console.log('Cloudinary upload result:', result);
+      const employee = new EmployeeModel({
+        id:nextId,
+        name: req.body.name,
+        role: req.body.role,
+        email: req.body.email,
+        password: req.body.password,
+        image: result.secure_url, // Cloudinary URL
+      });
+      try {
+        await employee.save();
+        res.json({ success: true, employee });
+        console.log('Employee saved successfully');
+      } catch (err) {
+        console.error('MongoDB save error:', err);
+        res.status(500).json({ error: 'Error saving employee' });
+      }
+    }).end(fileBuffer);
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+app.post('/employees/signin', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if email exists
+    const employee = await EmployeeModel.findOne({ email });
+    if (!employee) {
+      return res.json({ success:false,error: 'Invalid email or password' });
+    }
+    // Verify password  
+    if (password!=employee.password) {
+      return res.json({ success:false, error: 'Invalid email or password' });
+    }
+
+    // Check if role is administrator
+    const isAdmin = employee.role === 'administrator';
+
+    res.json({
+      success: true,
+      isAdmin: isAdmin,
+      // token: token // Include token if you are using JWT
+    });
+  } catch (err) {
+    console.error('Error during sign in:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.put("/employees/:id", authenticate, upload.single('file'), async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    // Find the product by its productId
+    const employee = await EmployeeModel.findOne({ id });
+
+    if (!employee) {
+      return res.json({ success:false, error: 'Employee not found' });
+    }
+
+    // Update the product fields
+    employee.name = req.body.name || employee.name;
+    employee.role = req.body.role || employee.role;
+    employee.password = req.body.password || employee.password;
+
+    // If a new image is uploaded, update the image URL
+    if (req.file) {
+      const fileBuffer = req.file.buffer;
+      // Upload the new image to Cloudinary
+      cloudinary.uploader.upload_stream({ resource_type: 'image' }, async (err, result) => {
+        if (err) {
+          console.error('Cloudinary upload error:', err);
+          return res.status(500).json({ error: 'Error uploading file' });
+        }
+        // Update the product's URL with the new secure URL
+        employee.image = result.secure_url;
+        // Save the updated product
+        await employee.save();
+        res.json({ success: true, employee });
+        console.log("Employee updated successfully with new image");
+      }).end(fileBuffer);
+    } else {
+      // If no new image is uploaded, save the product with existing URL
+      await employee.save();
+      res.json({ success: true, employee });
+      console.log("Employee updated successfully");
+    }
+  } catch (err) {
+    console.error('Error updating Employee:', err);
+    res.status(500).json({ error: 'Error updating employee' });
+  }
+});
+
+
+
+app.delete("/employees/:id", authenticate, async (req, res) => {
+  const id = req.params.id;
+  try {
+    const deletedEmployee = await EmployeeModel.findOneAndDelete({ id: id });
+    if (!deletedEmployee) {
+      return res.json({ success:false,error: `Employee with id ${id} not found` });
+    }
+    res.json({ success: true, deletedEmployee });
+    console.log(`Employee with id ${id} deleted successfully`);
+  } catch (err) {
+    console.error('Error deleting Employee:', err);
+    res.status(500).json({ error: 'Error deleting employee' });
+  }
+});
+
+app.get('/employees', async (req, res) => {
+  try {
+    const employees = await EmployeeModel.find();
+    res.json(employees);
+  } catch (err) {
+    console.error('Error fetching employees:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+// customers Routes
 
 
 

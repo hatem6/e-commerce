@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 /* eslint-disable */
 import { useStateContext } from '../contexts/ContextProvider';
+import axios from 'axios';
 
 const LoginModal = ({ onClose }) => {
   const { currentColor} = useStateContext();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onClose();
+    try {
+      const response = await axios.post("https://server-nu-cyan.vercel.app/employees/signin",{email:email,password:password}, {
+        headers: {
+          Authorization: `Bearer Hatoum1234`,
+        },
+      });
+   
+    if(response.data.success) {
+      if(response.data.isAdmin){
+        onClose();
+      }
+      else{
+        alert('Oups ! only administrator are allowed to sign in');
+      }
+    }
+    else{
+      alert('invalid email or password');
+    }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+    
   };
 
   return (
@@ -27,6 +51,7 @@ const LoginModal = ({ onClose }) => {
                 <input
                   type="email"
                   required
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
                 />
               </div>
@@ -35,6 +60,7 @@ const LoginModal = ({ onClose }) => {
                 <input
                   type="password"
                   required
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
                 />
               </div>

@@ -94,13 +94,13 @@ const Employees = () => {
       setTimeout(() => {
         setSuccessMessage("");
       }, 4000);
-      fetchProducts();
+      fetchEmployees();
     } catch (error) {
       console.error("Error uploading employee:", error);
       setIsAddingEmployee(false);
     }
   };
-  const fetchProducts = async () => {
+  const fetchEmployees = async () => {
     try {
       const response = await axios.get("https://server-nu-cyan.vercel.app/employees", {
         headers: {
@@ -128,7 +128,7 @@ const Employees = () => {
       setTimeout(() => {
         setSuccessMessage("");
       }, 4000);
-      fetchProducts();
+      fetchEmployees();
     } catch (error) {
       console.error("Error deleting employee:", error);
       setErrorMessage("Failed to delete employee.");
@@ -138,7 +138,7 @@ const Employees = () => {
     }
   };
   useEffect(() => {
-    fetchProducts();
+    fetchEmployees();
   }, []);
   return (
     <div className="">

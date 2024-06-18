@@ -31,6 +31,15 @@
       />
     </div>
     <div class="flex flex-col gap-4 border-b py-4 sm:flex-row">
+      <p class="shrink-0 w-32 font-medium">Password</p>
+      <input
+        v-model="password"
+        type="password"
+        placeholder="******"
+        class="w-full rounded-md border bg-white px-2 py-2 outline-none ring-gray-600 focus:ring-1"
+      />
+    </div>
+    <div class="flex flex-col gap-4 border-b py-4 sm:flex-row">
       <p class="shrink-0 w-32 font-medium">Phone Number</p>
       <input
         v-model="phone"
@@ -47,14 +56,14 @@
         class="flex h-70 w-full flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-gray-300 p-5 text-center"
       >
         <div
-          v-if="imageBase64 == null"
+          v-if="image == null"
           class="h-16 w-16 rounded-full"
           ref="lottieContainer"
         ></div>
         <img
-          v-if="imageBase64 != null"
+          v-if="image != null"
           class="h-16 w-16 rounded-full"
-          :src="imageBase64"
+          :src="image"
           alt=""
         />
         <p class="text-sm text-gray-600">
@@ -82,7 +91,8 @@
 <script>
 import { Lottie } from "lottie-web";
 import axios from "axios";
-import imageCompressor from "image-compressor.js";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 import animationData from "../assets/animation/account.json";
 export default {
@@ -91,10 +101,11 @@ export default {
       fullname: "",
       adress: "",
       email: "",
+      password:"",
       phone: "",
-      imageBase64: null,
+      image:"",
       update: false,
-      storedImage: "",
+      imageFile:"",
     };
   },
 
@@ -130,60 +141,62 @@ export default {
       this.fullname = JSON.parse(storedData).fullname;
       this.adress = JSON.parse(storedData).adress;
       this.email = JSON.parse(storedData).email;
+      this.password = JSON.parse(storedData).password;
       this.phone = "+216 " + JSON.parse(storedData).phone;
+      this.image= JSON.parse(storedData).image;
     },
     async handleImageChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          // Set the base64 URL to your data property
-          this.imageBase64 = reader.result;
-        };
-        reader.readAsDataURL(file);
-      }
+      this.imageFile = event.target.files[0];
     },
     async saveChanges() {
-      const email = this.email;
-      const newImage = this.imageBase64;
-      let myjson = {
-        email,
-        newImage,
-      };
-      try {
-        const response = await axios.put(
-          "http://localhost:3001/update",
-          myjson
-        );
-        console.log(response);
-        if (response.data == true) {
-          console.log("Changes Succes");
-          this.update = true;
-        } else {
-          console.log("no update");
-        } /*
-        const response2 = await axios.post(
-          "http://localhost:3001/getImage",
-          email
-        );
-        console.log(response2.data);
-        this.storedImage = response2.data;
-        */
-      } catch (error) {
-        console.error("Error while checking the account :", error);
+  const email = this.email;
+  const fullname = this.fullname; 
+  const adress = this.adress;  
+  const phone = this.phone;      
+  const password = this.password;
+  const imageFile = this.imageFile; // Assuming this is the file input
+
+  let formData = new FormData();
+  formData.append('email', email);
+  formData.append('fullname', fullname);
+  formData.append('adress', adress);
+  formData.append('phone', phone);
+  formData.append('password', password);
+
+  // If there is an image file to upload
+  if (imageFile) {
+    formData.append('file', imageFile);
+  }
+
+  try {
+    const response = await axios.put(
+      "https://server-nu-cyan.vercel.app/customers/update",
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer Hatoum1234`,
+        },
       }
-    },
+    );
+
+    if (response.data.success) {
+      console.log("Customer updated successfully", response.data.customer);
+      toast.success("account updated successfully",{
+        autoClose: 2000,
+      });
+    } else {
+      console.error("Error updating customer: ", response.data.error);
+    }
+  } catch (error) {
+    console.error("Error while updating the customer:", error);
+  }
+}
+
   },
   mounted() {
     this.initializeLottie();
     this.getAccountData();
-    /*const storedImage = JSON.parse(localStorage.getItem("Account")).image;
-    if (storedImage) {
-      this.imageBase64 = storedImage;
-    } 
-    if (this.update) {
-      this.imageBase64 = this.storedImage;
-    }*/
   },
 };
 </script>

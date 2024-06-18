@@ -53,8 +53,8 @@ export const links = [
 export const earningData = [
   {
     icon: <MdOutlineSupervisorAccount />,
-    amount: '39,354',
-    percentage: '-4%',
+    amount: '0',
+    percentage: '0%',
     title: 'Customers',
     iconColor: '#03C9D7',
     iconBg: '#E5FAFB',
@@ -62,7 +62,7 @@ export const earningData = [
   },
   {
     icon: <BsBoxSeam />,
-    amount: '4,396',
+    amount: '0',
     percentage: '+23%',
     title: 'Products',
     iconColor: 'rgb(255, 244, 229)',
@@ -71,7 +71,7 @@ export const earningData = [
   },
   {
     icon: <FiBarChart />,
-    amount: '423,39',
+    amount: '0',
     percentage: '+38%',
     title: 'Sales',
     iconColor: 'rgb(228, 106, 118)',
@@ -81,7 +81,7 @@ export const earningData = [
   },
   {
     icon: <HiOutlineRefresh />,
-    amount: '39,354',
+    amount: '0',
     percentage: '-12%',
     title: 'Refunds',
     iconColor: 'rgb(0, 194, 146)',

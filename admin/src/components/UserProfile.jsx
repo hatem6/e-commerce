@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 /* eslint-disable */
 import { MdOutlineCancel } from 'react-icons/md';
 
@@ -9,6 +9,20 @@ import { useStateContext } from '../contexts/ContextProvider';
 
 const UserProfile = () => {
   const { currentColor } = useStateContext();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('');
+  const [image, setImage] = useState(null);
+  const [id, setId] = useState('');
+  useEffect(() => {
+    const account = JSON.parse(localStorage.getItem('account'));
+    console.log(account);
+    setName(account.name);
+    setEmail(account.email);
+    setImage(account.image);
+    setId(account.id);
+    setRole(account.role);
+  }, []);
 
   return (
     <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">
@@ -25,13 +39,13 @@ const UserProfile = () => {
       <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
         <img
           className="rounded-full h-24 w-24"
-          src="https://i.postimg.cc/JzKV2bVR/hatem.jpg"
+          src={image}
           alt="user-profile"
         />
         <div>
-          <p className="font-semibold text-xl dark:text-gray-200"> Atik Hatem </p>
-          <p className="text-gray-500 text-sm dark:text-gray-400">  Administrator   </p>
-          <p className="text-gray-500 text-sm font-semibold dark:text-gray-400"> hatematig25@gmail.com</p>
+          <p className="font-semibold text-xl dark:text-gray-200">{name}</p>
+          <p className="text-gray-500 text-sm dark:text-gray-400">  {role}  </p>
+          <p className="text-gray-500 text-sm font-semibold dark:text-gray-400">{email}</p>
         </div>
       </div>
       <div>

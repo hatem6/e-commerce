@@ -7,6 +7,11 @@ const LoginModal = ({ onClose }) => {
   const { currentColor} = useStateContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const myjson={
+    name: name,
+  }
+  localStorage.setItem('account',JSON.stringify(myjson));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +24,7 @@ const LoginModal = ({ onClose }) => {
    
     if(response.data.success) {
       if(response.data.isAdmin){
+        localStorage.setItem("account",JSON.stringify(response.data.employee));
         onClose();
       }
       else{

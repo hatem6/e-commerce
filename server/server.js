@@ -7,6 +7,8 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const ProductModel = require("./models/Products");
 const EmployeeModel = require("./models/Employees");
+const ClientModel = require("./models/Clients");
+
 
 dotenv.config();
 const port = process.env.PORT || 3001;
@@ -276,6 +278,7 @@ app.post('/employees/signin', async (req, res) => {
     const isAdmin = employee.role === 'administrator';
 
     res.json({
+      employee: employee,
       success: true,
       isAdmin: isAdmin,
       // token: token // Include token if you are using JWT
@@ -356,11 +359,139 @@ app.get('/employees', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
+/*
+app.get('/employees/:id',authenticate,async (req, res) => {
+  const id  = req.params.id;
+  try {
+    const employee = await EmployeeModel.findOne({id:id});
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+    res.json(employee);
+  } catch (err) {
+    console.error('Error fetching employee:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+*/
 
 // customers Routes
 
+app.post('/customers/signup', authenticate, async (req, res, next) => {
+  try {
+    const existingEmployee = await ClientModel.findOne({ email: req.body.email });
+    if (existingEmployee) {
+      return res.json({ success:false,error: 'Email already exists' });
+    }
+      const customer = new ClientModel({
+        fullname: req.body.fullname,
+        adress: req.body.adress,
+        phone: req.body.phone,
+        email: req.body.email,
+        password: req.body.password,
+        image: "",
+      });
+      try {
+        await customer.save();
+        res.json({ success: true, customer });
+        console.log('Customer saved successfully');
+      } catch (err) {
+        console.error('MongoDB save error:', err);
+        res.status(500).json({ error: 'Error saving customer' });
+      }
+    } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/customers/signin', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if email exists
+    const customer = await ClientModel.findOne({ email });
+    if (!customer) {
+      return res.json({ success:false,error: 'Invalid email or password' });
+    }
+    // Verify password  
+    if (password!=customer.password) {
+      return res.json({ success:false, error: 'Invalid email or password' });
+    }
+    res.json({
+      customer: customer,
+      success: true,
+    });
+  } catch (err) {
+    console.error('Error during sign in:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.put("/customers/update", authenticate, upload.single('file'), async (req, res) => {
+  const { email } = req.body;
+  try {
+    const customer = await ClientModel.findOne({ email: email });
+    if (!customer) {
+      return res.json({ success: false, error: 'Customer not found' });
+    }
+
+    customer.fullname = req.body.fullname || customer.fullname;
+    customer.adress = req.body.adress || customer.adress;
+    customer.phone = req.body.phone || customer.phone;
+    customer.password = req.body.password || customer.password;
+
+    // If a new image is uploaded, update the image URL
+    if (req.file) {
+      const fileBuffer = req.file.buffer;
+      // Upload the new image to Cloudinary
+      cloudinary.uploader.upload_stream({ resource_type: 'image' }, async (err, result) => {
+        if (err) {
+          console.error('Cloudinary upload error:', err);
+          return res.status(500).json({ error: 'Error uploading file' });
+        }
+        customer.image = result.secure_url;
+        await customer.save();
+        res.json({ success: true, customer });
+        console.log("Customer updated successfully with new image");
+      }).end(fileBuffer);
+    } else {
+      // If no new image is uploaded, save the customer with existing URL
+      await customer.save();
+      res.json({ success: true, customer });
+      console.log("Customer updated successfully");
+    }
+  } catch (err) {
+    console.error('Error updating customer:', err);
+    res.status(500).json({ error: 'Error updating customer' });
+  }
+});
+
+
+app.get('/customers', async (req, res) => {
+  try {
+    const customers = await ClientModel.find();
+    res.json(customers);
+  } catch (err) {
+    console.error('Error fetching customers:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.delete("/customers/delete", authenticate, async (req, res) => {
+  const { email } = req.body;
+  try {
+    const deletedCustomer = await ClientModel.findOneAndDelete({ email:email});
+    if (!deletedCustomer) {
+      return res.json({ success:false,error: `Customer not found` });
+    }
+    res.json({ success: true, deletedCustomer });
+    console.log(`Customer deleted successfully`);
+  } catch (err) {
+    console.error('Error deleting Customer:', err);
+    res.status(500).json({ error: 'Error deleting employee' });
+  }
+});
 
 
 

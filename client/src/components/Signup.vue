@@ -4,12 +4,9 @@
       <div class="text-center pb-8 flex items-center justify-center">
         <div ref="lottieContainer"></div>
       </div>
-      <form
-        @submit.prevent="signUp"
-        class="space-y-0 grid grid-cols-1 lg:grid-cols-2 gap-4"
-      >
-        <div class="">
-          <label class="font-medium"> Fall name </label>
+      <form @submit.prevent="signUp" class="space-y-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div>
+          <label class="font-medium">Full name</label>
           <input
             v-model="fullname"
             type="text"
@@ -18,7 +15,7 @@
           />
         </div>
         <div>
-          <label class="font-medium"> adress </label>
+          <label class="font-medium">Address</label>
           <input
             v-model="adress"
             type="text"
@@ -27,7 +24,7 @@
           />
         </div>
         <div class="lg:col-span-2">
-          <label class="font-medium"> Phone Number</label>
+          <label class="font-medium">Phone Number</label>
           <input
             v-model="phone"
             type="text"
@@ -36,7 +33,7 @@
           />
         </div>
         <div class="lg:col-span-2">
-          <label class="font-medium"> Email</label>
+          <label class="font-medium">Email</label>
           <input
             v-model="email"
             type="email"
@@ -44,9 +41,8 @@
             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
           />
         </div>
-
         <div class="lg:col-span-2">
-          <label class="font-medium"> Password </label>
+          <label class="font-medium">Password</label>
           <input
             v-model="password"
             type="password"
@@ -55,7 +51,7 @@
           />
         </div>
         <div class="lg:col-span-2">
-          <label class="font-medium"> Confirm Password </label>
+          <label class="font-medium">Confirm Password</label>
           <input
             v-model="confirmPassword"
             type="password"
@@ -63,8 +59,8 @@
             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
           />
         </div>
-
         <button
+          type="submit"
           class="w-full px-4 py-2 text-white font-medium bg-gray-950 hover:bg-gray-800 active:bg-gray-800 rounded-lg duration-150 lg:col-span-2"
         >
           Create
@@ -73,12 +69,14 @@
     </div>
   </main>
 </template>
+
 <script>
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import axios from "axios";
-import { Lottie } from "lottie-web";
+import lottie from "lottie-web";
 import animationData from "../assets/animation/second.json";
+
 export default {
   data() {
     return {
@@ -93,80 +91,53 @@ export default {
   },
   methods: {
     async signUp() {
-      try {
-        const response = await axios.post("http://localhost:3001/check", {
+      if (this.password === this.confirmPassword) {
+        const myjson = {
+          fullname: this.fullname,
+          adress: this.adress,
+          phone: this.phone,
           email: this.email,
-        });
-        console.log(response.data);
-        console.log(this.email);
-
-        if (response.data === false) {
-          if (this.password === this.confirmPassword) {
-            const myjson = {
-              fullname: this.fullname,
-              adress: this.adress,
-              phone: this.phone,
-              email: this.email,
-              password: this.password,
-              image: this.image,
-            };
-
-            try {
-              const response2 = await axios.post(
-                "http://localhost:3001/signup",
-                myjson
-              );
-
-              if (response2.data === true) {
-                window.location.href = "/signin";
-              } else {
-                toast.error("Signup failed!", {
-                  autoClose: 2000, // Optionally set autoClose time
-                });
-              }
-            } catch (error) {
-              console.error("Error:", error);
-              alert("Signup failed");
+          password: this.password,
+        };
+        try {
+          const response = await axios.post(
+            "https://server-nu-cyan.vercel.app/customers/signup",
+            myjson,
+            {
+              headers: {
+                Authorization: "Bearer Hatoum1234",
+              },
             }
+          );
+          if (response.data.success) {
+            window.location.href = "/signin";
           } else {
-            toast.error("Confirm your password !", {
-              autoClose: 2000, // Optionally set autoClose time
+            toast.error("Email already exists", {
+              autoClose: 2000,
             });
           }
-        } else {
-          toast.error("Email already exists!", {
-            autoClose: 2000, // Optionally set autoClose time
+        } catch (error) {
+          console.error("Error:", error.response ? error.response.data : error.message);
+          toast.error("Signup failed", {
+            autoClose: 2000,
           });
         }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Error checking email existence");
+      } else {
+        toast.error("Confirm your password!", {
+          autoClose: 2000,
+        });
       }
     },
     initializeLottie() {
-      if (typeof Lottie === "undefined") {
-        // If Lottie is undefined, attempt to load it
-        import("lottie-web")
-          .then(({ default: lottie }) => {
-            this.loadAnimationWithData(lottie, animationData);
-          })
-          .catch((error) => {
-            console.error("Error loading Lottie:", error);
-          });
-      } else {
-        this.loadAnimationWithData(Lottie, animationData);
-      }
-    },
-    loadAnimationWithData(lottieInstance, animationData) {
       const container = this.$refs.lottieContainer;
-      if (!container || !lottieInstance || !animationData) return;
+      if (!container) return;
 
-      lottieInstance.loadAnimation({
+      lottie.loadAnimation({
         container: container,
-        renderer: "svg", // Choose the renderer you want (svg, canvas, html)
+        renderer: "svg",
         loop: true,
         autoplay: true,
-        animationData: animationData, // Your loaded animation data
+        animationData: animationData,
       });
     },
   },

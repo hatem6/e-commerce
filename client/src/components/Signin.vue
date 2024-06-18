@@ -62,39 +62,36 @@ export default {
   },
   methods: {
     async check() {
-      const email = this.email;
-      const password = this.password;
       let myjson = {
-        email,
+        email:this.email,
+        password:this.password
       };
       try {
         const response = await axios.post(
-          "https://server-rlwuyzc0s-hatem6.vercel.app/check",
-          myjson
+          "https://server-nu-cyan.vercel.app/customers/signin",
+          myjson,
+          {
+              headers: {
+                Authorization: "Bearer Hatoum1234",
+              },
+            }
         );
-        if (response.data == false) {
-          console.log("Email not found");
-          toast.error("Email not found !", {
+        if (response.data.success== false) {
+          toast.error("Invalid email or password!", {
             autoClose: 2000, // Optionally set autoClose time
           });
         } else {
-          if (response.data.password != password) {
-            console.log("invalid password");
-            toast.error("Invalid Password!", {
-              autoClose: 2000, // Optionally set autoClose time
-            });
-          } else {
             console.log("success");
             let account = {
-              fullname: response.data.fullname,
-              adress: response.data.adress,
-              phone: response.data.phone,
-              email: response.data.email,
-              image: null,
+              fullname: response.data.customer.fullname,
+              adress: response.data.customer.adress,
+              phone: response.data.customer.phone,
+              email: response.data.customer.email,
+              password: response.data.customer.password,
+              image: response.data.customer.image,
             };
             localStorage.setItem("Account", JSON.stringify(account));
             window.location.href = "/account";
-          }
         }
       } catch (error) {
         console.error("Error while checking the account :", error);

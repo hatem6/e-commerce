@@ -30,12 +30,7 @@
       </div>
 
       <!-- Pagination -->
-      <div class="col-lg-12 text-center">
-        <div class="pagination__option">
-          <a href="#">1</a>
-          <a href="#">2</a>
-        </div>
-      </div>
+     
     </div>
   </div>
 </template>

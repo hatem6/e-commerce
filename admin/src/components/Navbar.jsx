@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 /* eslint-disable */
 import { AiOutlineMenu } from 'react-icons/ai';
 import { RiNotification3Line } from 'react-icons/ri';
@@ -28,7 +28,8 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 
 const Navbar = () => {
   const { currentColor, activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
-
+  const [name, setName] = useState('');
+  const [image, setImage] = useState(null);
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
 
@@ -37,7 +38,14 @@ const Navbar = () => {
     handleResize();
 
     return () => window.removeEventListener('resize', handleResize);
+
   }, []);
+  useEffect(() => {
+    const account = JSON.parse(localStorage.getItem('account'));
+    console.log(account);
+    setName(account.name);
+    setImage(account.image);
+  });
 
   useEffect(() => {
     if (screenSize <= 900) {
@@ -63,13 +71,13 @@ const Navbar = () => {
           >
             <img
               className="rounded-full w-8 h-8"
-              src="https://i.postimg.cc/JzKV2bVR/hatem.jpg"
+              src={image}
               alt="user-profile"
             />
             <p>
               <span className="text-gray-400 text-14">Hi,</span>{' '}
               <span className="text-gray-400 font-bold ml-1 text-14">
-                Hatem
+                {name}
               </span>
             </p>
             <MdKeyboardArrowDown className="text-gray-400 text-14" />

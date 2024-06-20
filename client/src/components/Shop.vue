@@ -45,12 +45,12 @@
       <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6">
           <div class="cart__btn">
-            <router-link to="/">Continue Shopping</router-link>
+           
           </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6">
           <div class="cart__btn update__btn">
-            <a href="#"><span class="icon_loading"></span> Update cart</a>
+            <router-link to="/">Continue Shopping</router-link>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@
             <h6>Cart total</h6>
             <ul>
               <li>
-                Total <span class="Total">{{ total }} DT</span>
+                Total <span class="Total">{{ total }} $</span>
               </li>
             </ul>
 

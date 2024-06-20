@@ -8,6 +8,7 @@ const cloudinary = require('cloudinary').v2;
 const ProductModel = require("./models/Products");
 const EmployeeModel = require("./models/Employees");
 const ClientModel = require("./models/Clients");
+const OrderModel = require("./models/Orders");
 
 
 dotenv.config();
@@ -493,6 +494,32 @@ app.delete("/customers/delete", authenticate, async (req, res) => {
   }
 });
 
+// Orders Routes
+
+const getNextOrderId = async () => {
+  const lastOrder = await OrderModel.findOne().sort({ orderId: -1 });
+  return lastOrder ? lastOrder.orderId + 1 : 1;
+};
+app.post("/orders/post",authenticate,async (req, res) => {
+  const { fullname, adress, phone, total, date, products } = req.body;
+  try {
+    const nextOrderId = await getNextOrderId();
+    const newOrder = new OrderModel({
+      orderId: nextOrderId,
+      fullname,
+      adress,
+      phone,
+      total,
+      date,
+      products,
+    });
+    await newOrder.save();
+    res.json(newOrder);
+  } catch (error) {
+    console.error("Error saving products:", error);
+    res.status(500).json({ error: "Failed to save products" });
+  }
+});
 
 
 app.get('/', (req, res) => {

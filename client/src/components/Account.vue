@@ -43,7 +43,7 @@
       <p class="shrink-0 w-32 font-medium">Phone Number</p>
       <input
         v-model="phone"
-        placeholder="+216 "
+        placeholder=""
         class="w-full rounded-md border bg-white px-2 py-2 outline-none ring-gray-600 focus:ring-1"
       />
     </div>
@@ -142,7 +142,7 @@ export default {
       this.adress = JSON.parse(storedData).adress;
       this.email = JSON.parse(storedData).email;
       this.password = JSON.parse(storedData).password;
-      this.phone = "+216 " + JSON.parse(storedData).phone;
+      this.phone = JSON.parse(storedData).phone;
       this.image= JSON.parse(storedData).image;
     },
     async handleImageChange(event) {

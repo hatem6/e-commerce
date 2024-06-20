@@ -19,7 +19,7 @@
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6">
                 <div class="checkout__form__input">
-                  <p>Address <span>*</span></p>
+                  <p>Adress <span>*</span></p>
                   <input id="address" type="text" v-model="adress" />
                 </div>
               </div>
@@ -63,7 +63,7 @@
                 <ul>
                   <li><span></span></li>
                   <li>
-                    Total <span id="Total">{{ total }} DT</span>
+                    Total <span id="Total">{{ total }} $</span>
                   </li>
                 </ul>
               </div>
@@ -92,6 +92,12 @@ export default {
     };
   },
   methods: {
+    getAccountData() {
+      let storedData = localStorage.getItem("Account");
+      this.fullname = JSON.parse(storedData).fullname;
+      this.adress = JSON.parse(storedData).adress;
+      this.phone =  JSON.parse(storedData).phone;
+    },
     calcTotal() {
       for (let i = 0; i < this.products.length; i++) {
         this.total +=
@@ -113,7 +119,6 @@ export default {
         size: String(product.productSize), // Convert to string explicitly
         image: String(product.productUrl || ""), // Convert to string explicitly
       }));
-
       let myjson = {
         fullname,
         adress,
@@ -126,16 +131,17 @@ export default {
       console.log(myjson);
       try {
         const response = await axios.post(
-          "https://server-qsgu4svzv-hatem6.vercel.app/post",
-          myjson
+          "https://server-nu-cyan.vercel.app/orders/post",
+          myjson,
+          {
+              headers: {
+                Authorization: "Bearer Hatoum1234",
+              },
+            }
         );
         if (response.status === 200) {
           toast.success("Order Placed !", {
-            autoClose: 3000, // Optionally set autoClose time
-            onClose: () => {
-              // Code to execute after toast auto-closes
-              this.adress = "";
-            },
+            autoClose: 3000, 
           });
         }
       } catch (error) {
@@ -147,6 +153,12 @@ export default {
     const savedShop = localStorage.getItem("savedShop");
     this.products = JSON.parse(savedShop);
     this.calcTotal();
+    this.getAccountData();
+    // Set current date and time
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split("T")[0]; // Format date as YYYY-MM-DD
+    const formattedTime = currentDate.toTimeString().split(" ")[0]; // Format time as HH:MM:SS
+    this.date = `${formattedDate} ${formattedTime}`; // Combine date and time
   },
 };
 </script>

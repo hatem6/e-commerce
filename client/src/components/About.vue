@@ -2,15 +2,14 @@
   <section class="product-details spad">
     <div class="container">
       <div class="row ">
-        <div class="col-lg-6 h-72 md:h-auto">
-          <div class="product__details__pic  ">
-            <div class="product__details__slider__content">
-              <div class="product__detail__pic">
+        <div class="col-lg-6 h-auto">
+          <div class="">
+              <div class="">
                 <img class="product__big__img" :src="productUrl" alt="" />
               </div>
-            </div>
           </div>
         </div>
+        <br>
         <div class="col-lg-6">
           <div class="product__details__text">
             <h3>{{ productName }}</h3>
@@ -34,7 +33,7 @@
             </div>
             
 
-            <h2 id="price" style="color: #ca1515">{{ productPrice }} $</h2>
+            <h2 class="text-2xl md:text-4xl" id="price" style="color: #ca1515">{{ productPrice }} $</h2>
 
             <p>
               Nemo enim ipsam voluptatem quia aspernatur aut odit aut loret
@@ -204,17 +203,10 @@ export default {
           productSize: this.productSize,
         };
         eventBus.emit("dataToNavbar", dataToSend);
-        this.showSuccessMessage();
+        this.$router.push("/shop");
       }
     },
-    showSuccessMessage() {
-      toast.success("Product added successfully", {
-        autoClose: 2000,
-      });
-      setTimeout(() => {
-        this.$router.push("/shop");
-      }, 3000);
-    },
+    
   },
 
   created() {

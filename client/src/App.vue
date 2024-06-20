@@ -3,18 +3,19 @@
     <div class="navbar">
       <Navbar></Navbar>
     </div>
-   
     <br /><br /><br /><br /><br />
     <div class="container">
       <br />
-      <Categorie v-if="!RouteHidden"></Categorie>
-      <router-view class="components"></router-view>
+      <Categorie  v-if="!RouteHidden"></Categorie>
+      <router-view  class="components"></router-view>
     </div>
     <br /><br /><br />
     <Footer class="footer"> </Footer>
   </div>
 </template>
 <script>
+import "aos/dist/aos.css";
+import AOS from "aos";
 import Navbar from "./components/Navbar.vue";
 import Categorie from "./components/Categorie.vue";
 import Footer from "./components/Footer.vue";
@@ -28,6 +29,16 @@ export default {
     return {
       RouteHidden: false,
     };
+  },
+  created() {
+    this.$nextTick(() => {
+      AOS.init({
+        duration: 2500,
+        easing: "ease-in-out",
+        once: true,
+        mirror: false,
+      });
+    });
   },
   watch: {
     $route(to) {

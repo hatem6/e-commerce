@@ -15,7 +15,7 @@
           />
         </div>
         <div>
-          <label class="font-medium">Address</label>
+          <label class="font-medium">Adress</label>
           <input
             v-model="adress"
             type="text"

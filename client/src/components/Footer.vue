@@ -95,7 +95,7 @@ export default {};
   
 .row{
   position: relative;
-  left:20%;
+  left:30%;
   width:600px;
 }
 }

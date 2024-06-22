@@ -521,6 +521,34 @@ app.post("/orders/post",authenticate,async (req, res) => {
   }
 });
 
+app.get('/orders', authenticate, async (req, res) => {
+  try {
+    const orders = await OrderModel.find();
+    res.json(orders);
+  } catch (err) {
+    console.error('Error fetching orders:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.delete("/orders/:id", authenticate, async (req, res) => {
+  const orderId = req.params.id;
+  try {
+    const deletedOrder = await OrderModel.findOneAndDelete({ orderId: orderId });
+    if (!deletedOrder) {
+      return res.json({ success:false,error: `Order with id ${orderId} not found` });
+    }
+    res.json({ success: true, deletedOrder});
+    console.log(`Order with id ${orderId} deleted successfully`);
+  } catch (err) {
+    console.error('Error deleting Order:', err);
+    res.status(500).json({ error: 'Error deleting order' });
+  }
+});
+
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

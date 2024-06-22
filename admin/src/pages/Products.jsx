@@ -291,8 +291,8 @@ const Products = () => {
             <select className="w-full px-4 py-2 text-white bg-indigo-600  shadow-sm rounded-lg">
               <option value="" disabled selected hidden>Woman</option>
               <optgroup label="Woman" className='bg-white text-gray-900'>
-                <option value="dress" className='text-gray-900'>dress</option>
-                <option value="t-shirt" className='text-gray-900'>T-shirt</option>
+                <option value="dress" className='text-gray-900'>dresses</option>
+                <option value="t-shirt" className='text-gray-900'>T-shirts</option>
                 <option value="w-jeans" className='text-gray-900'>Jeans</option>
               </optgroup>
             </select>

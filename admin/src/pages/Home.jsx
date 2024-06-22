@@ -65,7 +65,7 @@ const Home= () => {
                 <Route path="/" element={<Ecommerce />} />
                 <Route path="/ecommerce" element={<Ecommerce />} />
                 {/* pages  */}
-                <Route path="#" element={<Orders />} />
+                <Route path="/orders" element={<Orders />} />
                 <Route path="/employees" element={<Employees />} />
                 <Route path="/customers" element={<Customers />} />
                 <Route path="/products" element={<Products />} />
